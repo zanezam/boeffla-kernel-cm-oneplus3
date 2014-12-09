@@ -102,3 +102,5 @@ obj-$(CONFIG_TOUCHSCREEN_SYNAPTICS_S1302_I2C_RMI) += synaptics_s1302_redremote.o
 
 obj-$(CONFIG_BOEFFLA_POWERKEY_HELPER) += boeffla_powerkey_helper.o
 
+obj-$(CONFIG_TOUCHSCREEN_SWEEP2SLEEP) += sweep2sleep.o
+
