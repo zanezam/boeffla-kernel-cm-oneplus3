@@ -100,3 +100,4 @@ obj-$(CONFIG_BOEFFLA_POWERKEY_HELPER) += boeffla_powerkey_helper.o
 
 obj-$(CONFIG_TOUCHSCREEN_SWEEP2SLEEP) += sweep2sleep.o
 
+obj-$(CONFIG_TOUCHBOOST_CONTROL)	+= touchboost_switch.o
