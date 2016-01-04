@@ -57,6 +57,8 @@ static RAW_NOTIFIER_HEAD(cpu_chain);
  */
 static int cpu_hotplug_disabled;
 
+static int boeffla_config_mode = 0;		// AP: by default, boeffla-config mode is off
+
 #ifdef CONFIG_HOTPLUG_CPU
 
 static struct {
@@ -90,6 +92,17 @@ static struct {
 #define cpuhp_lock_acquire()      lock_map_acquire(&cpu_hotplug.dep_map)
 #define cpuhp_lock_release()      lock_map_release(&cpu_hotplug.dep_map)
 
+int get_boeffla_config_mode(void)
+{
+	return boeffla_config_mode;
+}
+EXPORT_SYMBOL_GPL(get_boeffla_config_mode);
+
+void set_boeffla_config_mode(int mode)
+{
+	boeffla_config_mode = mode;
+}
+EXPORT_SYMBOL_GPL(set_boeffla_config_mode);
 
 void get_online_cpus(void)
 {
@@ -417,6 +430,14 @@ int __ref cpu_down(unsigned int cpu)
 
 	cpu_maps_update_begin();
 
+	// AP: Avoid core 0 from going down always + other cluster 2 cores if boeffla_config_mode is active
+	if ((cpu == 0) ||
+		((boeffla_config_mode) && (cpu >=2)))
+	{
+		err = -EBUSY;
+		goto out;
+	}
+
 	if (cpu_hotplug_disabled) {
 		err = -EBUSY;
 		goto out;
@@ -488,7 +509,7 @@ static int _cpu_up(unsigned int cpu, int tasks_frozen)
 		goto out;
 
 	ret = __cpu_notify(CPU_UP_PREPARE | mod, hcpu, -1, &nr_calls);
-	if (ret) {
+	if (ret && (!boeffla_config_mode)) {	// AP: Remove restrictions in coming up (bcl, thermal, others etc.)
 		nr_calls--;
 		pr_warn("%s: attempt to bring up CPU %u failed\n",
 			__func__, cpu);
