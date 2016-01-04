@@ -245,6 +245,9 @@ extern void cpu_hotplug_enable(void);
 void clear_tasks_mm_cpumask(int cpu);
 int cpu_down(unsigned int cpu);
 
+int get_boeffla_config_mode(void);
+void set_boeffla_config_mode(int mode);
+
 #else		/* CONFIG_HOTPLUG_CPU */
 
 static inline void cpu_hotplug_begin(void) {}
