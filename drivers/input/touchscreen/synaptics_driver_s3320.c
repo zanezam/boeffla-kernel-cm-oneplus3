@@ -46,6 +46,8 @@
 #include <linux/timer.h>
 #include <linux/time.h>
 
+#include <linux/boeffla_powerkey_helper.h>
+
 #ifdef CONFIG_FB
 #include <linux/fb.h>
 #include <linux/notifier.h>
@@ -150,6 +152,8 @@ struct test_header {
 #define BIT6 (0x1 << 6)
 #define BIT7 (0x1 << 7)
 
+#define IMPLEMENTED_FUNCTIONS	(BIT0)
+
 int LeftVee_gesture = 0; //">"
 int RightVee_gesture = 0; //"<"
 int DouSwip_gesture = 0; // "||"
@@ -208,7 +212,8 @@ static struct workqueue_struct *synaptics_wq = NULL;
 static struct workqueue_struct *synaptics_report = NULL;
 static struct workqueue_struct *get_base_report = NULL;
 static struct proc_dir_entry *prEntry_tp = NULL;
-
+static struct proc_dir_entry *prEntry_sweep_wake_tap = NULL;
+static struct proc_dir_entry *prEntry_sweep_wake_tap_implemented = NULL;
 
 #ifdef SUPPORT_GESTURE
 static uint32_t clockwise;
@@ -379,6 +384,7 @@ struct synaptics_optimize_data{
 	const struct i2c_device_id *dev_id;
 };
 static struct synaptics_optimize_data optimize_data;
+
 static void synaptics_ts_probe_func(struct work_struct *w)
 {
 	struct i2c_client *client_optimize = optimize_data.client;
@@ -1213,12 +1219,21 @@ static void gesture_judge(struct synaptics_ts_data *ts)
 	if((gesture == DouTap && DouTap_gesture)||(gesture == RightVee && RightVee_gesture)\
         ||(gesture == LeftVee && LeftVee_gesture)||(gesture == UpVee && UpVee_gesture)\
         ||(gesture == Circle && Circle_gesture)||(gesture == DouSwip && DouSwip_gesture)){
+
 		gesture_upload = gesture;
 		input_report_key(ts->input_dev, keyCode, 1);
 		input_sync(ts->input_dev);
 		input_report_key(ts->input_dev, keyCode, 0);
 		input_sync(ts->input_dev);
-	}else{
+	}
+    else if ((gesture == Left2RightSwip && Left2RightSwip_gesture)||(gesture == Right2LeftSwip && Right2LeftSwip_gesture)\
+			||(gesture == Up2DownSwip && Up2DownSwip_gesture)||(gesture == Down2UpSwip && Down2UpSwip_gesture))
+    {
+		// press powerkey
+		boeffla_press_powerkey();
+	}
+	else
+	{
 
 		ret = i2c_smbus_read_i2c_block_data( ts->client, F12_2D_CTRL20, 3, &(reportbuf[0x0]) );
 		ret = reportbuf[2] & 0x20;
@@ -1514,7 +1529,8 @@ static ssize_t tp_gesture_write_func(struct file *file, const char __user *buffe
     DouTap_gesture = (buf[0] & BIT7)?1:0; //double tap
 
 	if(DouTap_gesture||Circle_gesture||UpVee_gesture||LeftVee_gesture\
-        ||RightVee_gesture||DouSwip_gesture)
+        ||RightVee_gesture||DouSwip_gesture\
+        ||Left2RightSwip_gesture||Right2LeftSwip_gesture||Down2UpSwip_gesture||Up2DownSwip_gesture)
 	{
 		ts->gesture_enable = 1;
 	}
@@ -1524,6 +1540,58 @@ static ssize_t tp_gesture_write_func(struct file *file, const char __user *buffe
     }
 	return count;
 }
+
+static ssize_t tp_sweep_wake_implemented_read_func(struct file *file, char __user *user_buf, size_t count, loff_t *ppos)
+{
+	int ret = 0;
+	char page[PAGESIZE];
+	ret = sprintf(page, "%d\n", IMPLEMENTED_FUNCTIONS);
+	ret = simple_read_from_buffer(user_buf, count, ppos, page, strlen(page));
+	return ret;
+}
+
+static ssize_t tp_sweep_wake_read_func(struct file *file, char __user *user_buf, size_t count, loff_t *ppos)
+{
+	int ret = 0;
+	char page[PAGESIZE];
+	ret = sprintf(page, "%d\n", Left2RightSwip_gesture);
+	ret = simple_read_from_buffer(user_buf, count, ppos, page, strlen(page));
+	return ret;
+}
+
+static ssize_t tp_sweep_wake_write_func(struct file *file, const char __user *buffer, size_t count, loff_t *ppos)
+{
+	char buf[10];
+	struct synaptics_ts_data *ts = ts_g;
+
+	if(!ts)
+		return count;
+	if( count > 2 || ts->is_suspended)
+		return count;
+	if( copy_from_user(buf, buffer, count) ){
+		TPD_ERR(KERN_INFO "%s: read proc input error.\n", __func__);
+		return count;
+	}
+	TPD_ERR("%s write [0x%x]\n",__func__,buf[0]);
+
+	Left2RightSwip_gesture = (buf[0] & BIT0) ? 1 : 0;
+	Right2LeftSwip_gesture = (buf[0] & BIT0) ? 1 : 0;
+	Up2DownSwip_gesture = (buf[0] & BIT0) ? 1 : 0;
+	Down2UpSwip_gesture = (buf[0] & BIT0) ? 1 : 0;
+
+	if(DouTap_gesture||Circle_gesture||UpVee_gesture||LeftVee_gesture\
+        ||RightVee_gesture||DouSwip_gesture\
+        ||Left2RightSwip_gesture||Right2LeftSwip_gesture||Down2UpSwip_gesture||Up2DownSwip_gesture)
+	{
+		ts->gesture_enable = 1;
+	}
+	else
+    {
+        ts->gesture_enable = 0;
+    }
+	return count;
+}
+
 static ssize_t coordinate_proc_read_func(struct file *file, char __user *user_buf, size_t count, loff_t *ppos)
 {
 	int ret = 0;
@@ -1648,6 +1716,19 @@ static ssize_t flashlight_enable_write_func(struct file *file, const char __user
 static const struct file_operations tp_gesture_proc_fops = {
 	.write = tp_gesture_write_func,
 	.read =  tp_gesture_read_func,
+	.open = simple_open,
+	.owner = THIS_MODULE,
+};
+
+static const struct file_operations tp_sweep_wake_proc_fops = {
+	.write = tp_sweep_wake_write_func,
+	.read =  tp_sweep_wake_read_func,
+	.open = simple_open,
+	.owner = THIS_MODULE,
+};
+
+static const struct file_operations tp_sweep_wake_implemented_proc_fops = {
+	.read =  tp_sweep_wake_implemented_read_func,
 	.open = simple_open,
 	.owner = THIS_MODULE,
 };
@@ -2969,6 +3050,18 @@ static int init_synaptics_proc(void)
 	if(prEntry_tmp == NULL){
 		ret = -ENOMEM;
         TPD_ERR("Couldn't create gesture_enable\n");
+	}
+
+	prEntry_sweep_wake_tap = proc_create( "sweep_wake_enable", 0666, prEntry_tp, &tp_sweep_wake_proc_fops);
+	if(prEntry_sweep_wake_tap == NULL){
+		ret = -ENOMEM;
+		printk(KERN_INFO"init_synaptics_proc: Couldn't create proc entry\n");
+	}
+
+	prEntry_sweep_wake_tap_implemented = proc_create( "sweep_wake_enable_implemented", 0666, prEntry_tp, &tp_sweep_wake_implemented_proc_fops);
+	if(prEntry_sweep_wake_tap_implemented == NULL){
+		ret = -ENOMEM;
+		printk(KERN_INFO"init_synaptics_proc: Couldn't create proc entry\n");
 	}
 
 	prEntry_tmp = proc_create("coordinate", 0444, prEntry_tp, &coordinate_proc_fops);
