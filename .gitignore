@@ -22,19 +22,16 @@
 *.lst
 *.symtypes
 *.order
+modules.builtin
 *.elf
 *.bin
-*.gz
+# *.gz
 *.bz2
 *.lzma
 *.xz
-*.lz4
 *.lzo
-*.patch
+# *.patch
 *.gcno
-modules.builtin
-Module.symvers
-*.dwo
 
 #
 # Top-level generic files
@@ -46,6 +43,7 @@ Module.symvers
 /vmlinuz
 /System.map
 /Module.markers
+/Module.symvers
 
 #
 # Debian directory (make deb-pkg)
@@ -62,6 +60,7 @@ Module.symvers
 # Generated include files
 #
 include/config
+include/linux/version.h
 include/generated
 arch/*/include/generated
 
@@ -86,13 +85,5 @@ GTAGS
 *~
 \#*#
 
-#
-# Leavings from module signing
-#
-extra_certificates
-signing_key.priv
-signing_key.x509
-x509.genkey
-
-# Kconfig presets
-all.config
+# Generated source files
+smd_rpc_sym.c
