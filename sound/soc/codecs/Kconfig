@@ -872,4 +872,11 @@ config SND_SOC_MSM_HDMI_CODEC_RX
 config SND_SOC_MSM_HDMI_DBA_CODEC_RX
 	bool "HDMI DBA Audio Playback"
 	depends on MSM_DBA
+
+config BOEFFLA_SOUND
+	bool "Boeffla Sound engine"
+	default y
+	help
+		Boeffla sound engine by andip71 (aka Lord Boeffla)
+
 endmenu
