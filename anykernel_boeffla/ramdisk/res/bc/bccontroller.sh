@@ -469,6 +469,8 @@ fi
 
 if [ "apply_cpu_hotplug_profile_2" == "$1" ] || [ "revert_big_cpu_cluster_online" == "$1" ]; then
 
+	echo 0 > /sys/kernel/boeffla_config_mode/enabled
+
 	if [ "0 cores" == "$2" ]; then
 		echo 0 > /sys/devices/system/cpu/cpu2/online
 		echo 0 > /sys/devices/system/cpu/cpu3/online
@@ -1280,7 +1282,9 @@ if [ "extract_modem" == "$1" ]; then
 fi
 
 if [ "bring_big_cpu_cluster_online" == "$1" ]; then
+	echo 1 > /sys/kernel/boeffla_config_mode/enabled
 	echo 1 > /sys/devices/system/cpu/cpu2/online
-
+	echo 1 > /sys/devices/system/cpu/cpu3/online
+	
 	exit 0
 fi

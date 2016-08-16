@@ -102,6 +102,12 @@
 	/sbin/busybox sleep 10
 
 # Interaction with Boeffla-Config app V2
+
+	# ensure second cpu cluster is also up when energy saving mode is active
+	echo 1 > /sys/kernel/boeffla_config_mode/enabled
+	echo 1 > /sys/devices/system/cpu/cpu2/online
+	echo 1 > /sys/devices/system/cpu/cpu3/online
+	
 	# save original stock values for selected parameters
 	cat /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table > /dev/bk_orig_cpu_voltage
 	cat /sys/devices/system/cpu/cpu2/cpufreq/UV_mV_table > /dev/bk_orig_cpu_voltage_2
@@ -117,6 +123,9 @@
 	cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor > /dev/bk_orig_scaling_governor_2
 	cat /sys/block/sda/queue/scheduler > /dev/bk_orig_mmcblk0_scheduler
 	cat /sys/block/sda/queue/read_ahead_kb > /dev/bk_orig_mmcblk0_read_ahead_kb
+
+	# disable boeffla_config_mode for second cpu cluster again
+	echo 0 > /sys/kernel/boeffla_config_mode/enabled
 
 	# if there is a startconfig placed by Boeffla-Config V2 app, execute it;
 	if [ -f $BOEFFLA_STARTCONFIG ]; then
