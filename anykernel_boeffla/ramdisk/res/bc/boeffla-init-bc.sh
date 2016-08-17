@@ -123,6 +123,8 @@
 	cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor > /dev/bk_orig_scaling_governor_2
 	cat /sys/block/sda/queue/scheduler > /dev/bk_orig_mmcblk0_scheduler
 	cat /sys/block/sda/queue/read_ahead_kb > /dev/bk_orig_mmcblk0_read_ahead_kb
+	cat /proc/sys/kernel/random/read_wakeup_threshold > /dev/bk_read_wakeup_threshold
+	cat /proc/sys/kernel/random/write_wakeup_threshold > /dev/bk_write_wakeup_threshold
 
 	# disable boeffla_config_mode for second cpu cluster again
 	echo 0 > /sys/kernel/boeffla_config_mode/enabled
