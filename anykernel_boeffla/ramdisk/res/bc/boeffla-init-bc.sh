@@ -116,8 +116,8 @@
 	cat /sys/module/lowmemorykiller/parameters/minfree > /dev/bk_orig_minfree
 	/sbin/busybox lsmod > /dev/bk_orig_modules
 	cat /sys/class/kgsl/kgsl-3d0/devfreq/governor > /dev/bk_orig_gpu_governor
-	cat /sys/class/kgsl/kgsl-3d0/min_pwrlevel > /dev/bk_orig_min_pwrlevel
-	cat /sys/class/kgsl/kgsl-3d0/max_pwrlevel > /dev/bk_orig_max_pwrlevel
+	cat /sys/class/kgsl/kgsl-3d0/devfreq/min_freq > /dev/bk_orig_min_freq
+	cat /sys/class/kgsl/kgsl-3d0/devfreq/max_freq > /dev/bk_orig_max_freq
 	cat /proc/sys/vm/swappiness > /dev/bk_orig_swappiness
 	cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor > /dev/bk_orig_scaling_governor
 	cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor > /dev/bk_orig_scaling_governor_2
