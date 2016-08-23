@@ -33,13 +33,18 @@ void set_headphone_gain_l(int gain);
 void set_headphone_gain_r(int gain);
 
 
+// tfa98xx.c exported functions for Boeffla Sound engine
+int get_speaker_gain(void);
+void set_speaker_gain(int gain);
+
+
 /*****************************************/
 // Definitions
 /*****************************************/
 
 // Boeffla sound general
 #define BOEFFLA_SOUND_DEFAULT 	0
-#define BOEFFLA_SOUND_VERSION 	"1.0.0"
+#define BOEFFLA_SOUND_VERSION 	"1.1.0"
 #define DEBUG_DEFAULT 			0
 
 // headphone levels
@@ -47,5 +52,11 @@ void set_headphone_gain_r(int gain);
 #define HEADPHONE_REG_OFFSET	0
 #define HEADPHONE_MIN 			-30
 #define HEADPHONE_MAX 			30
+
+// speaker levels (0 is normal, 255 is lowest)
+#define SPEAKER_DEFAULT		0
+#define SPEAKER_REG_OFFSET	0
+#define SPEAKER_MIN 			-255
+#define SPEAKER_MAX 			0
 
 
