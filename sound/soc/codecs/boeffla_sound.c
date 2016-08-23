@@ -35,6 +35,7 @@ static int debug;			// debug switch
 
 static int headphone_volume_l;
 static int headphone_volume_r;
+static int speaker_volume;
 
 
 /*****************************************/
@@ -46,6 +47,7 @@ static void reset_boeffla_sound(void)
 	// set all boeffla sound config settings to defaults
 	headphone_volume_l = HEADPHONE_DEFAULT;
 	headphone_volume_r = HEADPHONE_DEFAULT;
+	speaker_volume = SPEAKER_DEFAULT;
 
 	if (debug)
 		printk("Boeffla-sound: boeffla sound reset done\n");
@@ -54,9 +56,15 @@ static void reset_boeffla_sound(void)
 
 static void reset_audio_hub(void)
 {
+	u16 tmp;
+	
 	// reset all audio hub registers back to defaults
 	set_headphone_gain_l(HEADPHONE_DEFAULT + HEADPHONE_REG_OFFSET);
 	set_headphone_gain_r(HEADPHONE_DEFAULT + HEADPHONE_REG_OFFSET);
+	
+	tmp = (SPEAKER_DEFAULT + SPEAKER_REG_OFFSET) << 8;
+	tmp += get_speaker_gain() & 0x00FF;
+	set_speaker_gain(tmp);
 
 	if (debug)
 		printk("Boeffla-sound: wcd9335 audio hub reset done\n");
@@ -125,7 +133,8 @@ static ssize_t headphone_volume_show(struct device *dev, struct device_attribute
 		val_r = val_r - 256;
 
 	// print current values
-	return sprintf(buf, "Headphone volume:\nLeft: %d\nRight: %d\n", val_l, val_r);
+	return sprintf(buf, "Headphone volume:\nLeft: %d\nRight: %d\n", 
+					val_l - HEADPHONE_REG_OFFSET, val_r - HEADPHONE_REG_OFFSET);
 }
 
 
@@ -174,6 +183,105 @@ static ssize_t headphone_volume_store(struct device *dev, struct device_attribut
 	return count;
 }
 
+static ssize_t speaker_volume_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	u16 val;
+
+	val = get_speaker_gain();	// mono speaker, so we alwas treat L and R the same
+	val = (val >> 8) * -1;
+	val = val - SPEAKER_REG_OFFSET;
+
+	// print current values
+	return sprintf(buf, "Speaker volume:\nLeft: %d\nRight: %d\n", val, val);
+}
+
+
+static ssize_t speaker_volume_store(struct device *dev, struct device_attribute *attr,
+					const char *buf, size_t count)
+{
+	unsigned int ret = -EINVAL;
+	int val;
+	int val_unused;
+	u16 tmp;
+
+	// Terminate if boeffla sound is not enabled
+	if (!boeffla_sound)
+		return count;
+
+	// read values from input buffer
+	ret = sscanf(buf, "%d %d", &val, &val_unused);	// mono speaker, so we only consider first value
+
+	if (ret != 2)
+		return -EINVAL;
+		
+	// check whether values are within the valid ranges and adjust accordingly
+	if (val > SPEAKER_MAX)
+		val = SPEAKER_MAX;
+
+	if (val < SPEAKER_MIN)
+		val = SPEAKER_MIN;
+
+	// store new value
+	speaker_volume = val;
+
+	// set new values
+	tmp = (val * -1) + SPEAKER_REG_OFFSET;
+	tmp = (tmp << 8) + (get_speaker_gain() & 0x00FF);
+	set_speaker_gain(tmp);
+
+	// print debug info
+	if (debug)
+		printk("Boeffla-sound: speaker volume L=%d R=%d\n", speaker_volume, speaker_volume);
+
+	return count;
+}
+
+/*
+// Microphone level general
+
+static ssize_t mic_level_general_show(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	return sprintf(buf, "Mic level general %d\n", mic_level);
+}
+
+
+static ssize_t mic_level_general_store(struct device *dev, struct device_attribute *attr,
+					const char *buf, size_t count)
+{
+	unsigned int ret = -EINVAL;
+	unsigned int val;
+
+	// Terminate if boeffla sound is not enabled
+	if (!boeffla_sound)
+		return count;
+
+	// read value for mic level from input buffer
+	ret = sscanf(buf, "%d", &val);
+
+	if (ret != 1)
+		return -EINVAL;
+
+	// check whether values are within the valid ranges and adjust accordingly
+	if (val > MICLEVEL_MAX)
+		val = MICLEVEL_MAX;
+
+	if (val < MICLEVEL_MIN)
+		val = MICLEVEL_MIN;
+
+	// store new value
+	mic_level = val;
+		
+	// set new value
+	tomtom_write_no_hook(codec, TOMTOM_A_CDC_TX4_VOL_CTL_GAIN, 
+		mic_level + MICLEVEL_REG_OFFSET);
+
+	// print debug info
+	if (debug)
+		printk("Boeffla-sound: Mic level general %d\n", mic_level);
+
+	return count;
+}
+*/
 
 // Debug status
 
@@ -218,6 +326,7 @@ static ssize_t version_show(struct device *dev, struct device_attribute *attr, c
 // define objects
 static DEVICE_ATTR(boeffla_sound, 0664, boeffla_sound_show, boeffla_sound_store);
 static DEVICE_ATTR(headphone_volume, 0664, headphone_volume_show, headphone_volume_store);
+static DEVICE_ATTR(speaker_volume, 0664, speaker_volume_show, speaker_volume_store);
 static DEVICE_ATTR(debug, 0664, debug_show, debug_store);
 static DEVICE_ATTR(version, 0664, version_show, NULL);
 
@@ -225,6 +334,7 @@ static DEVICE_ATTR(version, 0664, version_show, NULL);
 static struct attribute *boeffla_sound_attributes[] = {
 	&dev_attr_boeffla_sound.attr,
 	&dev_attr_headphone_volume.attr,
+	&dev_attr_speaker_volume.attr,
 	&dev_attr_debug.attr,
 	&dev_attr_version.attr,
 	NULL
