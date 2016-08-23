@@ -39,6 +39,12 @@
 #include "tfa98xx-regs.h"
 #include "tfa_container.h"
 #include "tfa_dsp.h"
+
+#ifdef CONFIG_BOEFFLA_SOUND
+#include "../boeffla_sound.h"
+struct snd_soc_codec *codec_ptr_tfa;
+#endif
+
 int testLogOn = 0;
 EXPORT_SYMBOL_GPL(testLogOn);
 
@@ -731,7 +737,17 @@ void tfa98xx_play_stop(void)
 	mutex_unlock(&tfa98xx->dsp_init_lock);
 }
 
+#ifdef CONFIG_BOEFFLA_SOUND
+int get_speaker_gain()
+{
+	return snd_soc_read(codec_ptr_tfa, TFA98XX_AUDIO_CTR);
+}
 
+void set_speaker_gain(int gain)
+{
+	snd_soc_write(codec_ptr_tfa, TFA98XX_AUDIO_CTR, gain);
+}
+#endif
 
 #define MAX_CONTROL_NAME	32
 
@@ -796,6 +812,10 @@ static int tfa98xx_probe(struct snd_soc_codec *codec)
 	codec->control_data = tfa98xx->regmap;
 	tfa98xx->codec = codec;
 	codec->cache_bypass = true;
+
+#ifdef CONFIG_BOEFFLA_SOUND
+	codec_ptr_tfa = codec;
+#endif
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,16,0)
 pr_err("%s snd_soc_codec_set_cache_io\n",__func__);
