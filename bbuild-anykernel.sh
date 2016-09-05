@@ -13,6 +13,7 @@
 BOEFFLA_VERSION="1.0-test-CM13.0-OnePlus3"
 
 TOOLCHAIN="/opt/toolchains/aarch64-linux-android-4.9/bin/aarch64-linux-android-"
+ARCHITECTURE=arm64
 
 COMPILE_DTB="n"
 MODULES_IN_SYSTEM="y"
@@ -71,6 +72,10 @@ if [ -f ~/x-settings.sh ]; then
 fi
 
 BOEFFLA_FILENAME="boeffla-kernel-$BOEFFLA_VERSION"
+
+# set environment
+export ARCH=$ARCHITECTURE
+export CROSS_COMPILE="${CCACHE} $TOOLCHAIN"
 
 
 #####################
