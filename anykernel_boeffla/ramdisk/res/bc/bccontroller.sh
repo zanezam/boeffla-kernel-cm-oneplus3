@@ -92,6 +92,11 @@ if [ "lov_modules" == "$1" ]; then
 	exit 0
 fi
 
+if [ "lov_sleep_gesture_texts" == "$1" ]; then
+	echo ";;3;4;5;;;"
+	exit 0
+fi
+
 if [ "***notimplemented*** lov_presets" == "$1" ]; then
 	# Note, the ^ sign will be translated into newline for this setting
 	echo "Power extreme~"
