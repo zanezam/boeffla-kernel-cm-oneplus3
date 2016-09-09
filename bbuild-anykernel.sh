@@ -14,6 +14,8 @@ BOEFFLA_VERSION="1.0-test-CM13.0-OnePlus3"
 
 TOOLCHAIN="/opt/toolchains/aarch64-linux-android-4.9/bin/aarch64-linux-android-"
 ARCHITECTURE=arm64
+COMPILER_FLAGS_KERNEL=""
+COMPILER_FLAGS_MODULE=""
 
 COMPILE_DTB="n"
 MODULES_IN_SYSTEM="y"
@@ -144,9 +146,9 @@ step3_compile()
 
 	# compile source
 	if [ -z "$OUTPUT_FOLDER" ]; then
-		make -j$NUM_CPUS 2>&1 |tee ../compile.log
+		make -j$NUM_CPUS CFLAGS_KERNEL="$COMPILER_FLAGS_KERNEL" CFLAGS_MODULE="$COMPILER_FLAGS_MODULE" 2>&1 |tee ../compile.log
 	else
-		make -j$NUM_CPUS O=$OUTPUT_FOLDER 2>&1 |tee ../compile.log
+		make -j$NUM_CPUS O=$OUTPUT_FOLDER CFLAGS_KERNEL="$COMPILER_FLAGS_KERNEL" CFLAGS_MODULE="$COMPILER_FLAGS_MODULE" 2>&1 |tee ../compile.log
 	fi
 
 	# compile dtb if required
