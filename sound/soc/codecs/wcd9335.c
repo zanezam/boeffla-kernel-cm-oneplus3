@@ -13108,6 +13108,17 @@ void set_headphone_gain_r(int gain)
 	snd_soc_write(codec_ptr, WCD9335_CDC_RX2_RX_VOL_MIX_CTL, gain);
 	snd_soc_write(codec_ptr, WCD9335_CDC_RX2_RX_VOL_CTL, gain);
 }
+
+int get_mic_gain_general()
+{
+	return snd_soc_read(codec_ptr, WCD9335_CDC_RX0_RX_VOL_CTL);
+}
+
+void set_mic_gain_general(int gain)
+{
+	snd_soc_write(codec_ptr, WCD9335_CDC_RX0_RX_VOL_CTL, gain);
+}
+
 #endif
 
 static int tasha_codec_probe(struct snd_soc_codec *codec)

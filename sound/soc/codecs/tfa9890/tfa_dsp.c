@@ -30,7 +30,9 @@
 #include "tfa98xx-regs.h"
 #include "tfa_container.h"
 #include "tfa_dsp.h"
-
+#ifdef CONFIG_BOEFFLA_SOUND
+#include "../boeffla_sound.h"
+#endif
 
 
 /* size of the data buffer used for I2C transfer */
@@ -1259,6 +1261,11 @@ int tfa98xx_set_volume(struct tfa98xx *tfa98xx, u32 voldB)
 		volume_value = 255;
 
 	pr_debug("%d, attenuation -%d dB\n", volume_value, float_to_int(voldB));
+
+#ifdef CONFIG_BOEFFLA_SOUND
+	if (get_speaker_gain() < 0)
+		return 0;
+#endif
 
 	/* volume value is in the top 8 bits of the register */
 	value = (value & 0x00FF) | (u16)(volume_value << 8);
