@@ -402,7 +402,7 @@ fi
 
 if [ "param_misc" == "$1" ]; then
 	# vibration intensity min/max/steps
-	echo "0;20;1;"
+	echo "1;35;1;"
 	# touch key led duration min/max/steps
 	echo "0;30000;500"
 	exit 0
