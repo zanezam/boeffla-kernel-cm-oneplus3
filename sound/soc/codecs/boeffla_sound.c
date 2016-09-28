@@ -17,6 +17,9 @@
 /*
  * Change log:
  * 
+ * 1.2.1 (28.09.2016)
+ *   - Fix the completely broken mic gain sysfs not storing any settings
+ *
  * 1.2.0 (26.09.2016)
  *   - Add general mic gain control + avoid speaker volume resets
  *
@@ -251,7 +254,15 @@ static ssize_t speaker_volume_store(struct device *dev, struct device_attribute 
 
 static ssize_t mic_level_general_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	return sprintf(buf, "Mic level general %d\n", get_mic_gain_general());
+	int val;
+
+	val = get_mic_gain_general();
+
+	// convert byte to signed int
+	if (val > 127)
+		val = (256 - val) * -1;
+
+	return sprintf(buf, "Mic level general %d\n", val);
 }
 
 
@@ -259,7 +270,7 @@ static ssize_t mic_level_general_store(struct device *dev, struct device_attribu
 					const char *buf, size_t count)
 {
 	unsigned int ret = -EINVAL;
-	unsigned int val;
+	int val;
 
 	// Terminate if boeffla sound is not enabled
 	if (!boeffla_sound)
@@ -280,7 +291,7 @@ static ssize_t mic_level_general_store(struct device *dev, struct device_attribu
 
 	// store new value
 	mic_level_general = val;
-		
+
 	// set new value
 	set_mic_gain_general(mic_level_general);
 

@@ -1,7 +1,7 @@
 /*
  * Author: andip71
  * 
- * Version 1.2.0
+ * Version 1.2.1
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -47,7 +47,7 @@ void set_speaker_gain(int gain);
 
 // Boeffla sound general
 #define BOEFFLA_SOUND_DEFAULT 	0
-#define BOEFFLA_SOUND_VERSION 	"1.2.0"
+#define BOEFFLA_SOUND_VERSION 	"1.2.1"
 #define DEBUG_DEFAULT 			0
 
 // headphone levels
