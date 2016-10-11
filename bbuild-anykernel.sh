@@ -2,9 +2,9 @@
 
 # Boeffla Kernel Universal Build Script
 #
-# 64 bit version (OnePlus 2, CM13)
+# Version 1.3, 11.10.2016
 #
-# (C) Lord Boeffla (aka andip71), 01.07.2016
+# (C) Lord Boeffla (aka andip71)
 
 #######################################
 # Parameters to be configured manually
@@ -17,6 +17,7 @@ ARCHITECTURE=arm64
 COMPILER_FLAGS_KERNEL=""
 COMPILER_FLAGS_MODULE=""
 
+KERNEL_IMAGE="Image.gz-dtb"
 COMPILE_DTB="n"
 MODULES_IN_SYSTEM="y"
 OUTPUT_FOLDER=""
@@ -116,7 +117,7 @@ step2_make_config()
 
 	# build make string depending on if we need to compile to an output folder
 	# and if we need to have a defconfig variant
-	MAKESTRING="arch=arm64 $DEFCONFIG"
+	MAKESTRING="arch=$ARCHITECTURE $DEFCONFIG"
 
 	if [ ! -z "$OUTPUT_FOLDER" ]; then
 		rm -rf $BUILD_PATH/output
@@ -156,29 +157,26 @@ step3_compile()
 		echo
 
 		# Compile dtb (device tree blob) file
-		if [ -f $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/dt.img ]; then
-			rm $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/dt.img
+		if [ -f $BUILD_PATH/$OUTPUT_FOLDER/arch/$ARCHITECTURE/boot/dt.img ]; then
+			rm $BUILD_PATH/$OUTPUT_FOLDER/arch/$ARCHITECTURE/boot/dt.img
 		fi
 
 		chmod 777 tools_boeffla/dtbtool
-		tools_boeffla/dtbtool -o $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/dt.img -s 2048 -p $BUILD_PATH/$OUTPUT_FOLDER/scripts/dtc/ $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/dts/
-	else
-		# copy Image to zImage (as this kernel uses an uncompressed image)
-		cp $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/Image.gz-dtb $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/zImage
+		tools_boeffla/dtbtool -o $BUILD_PATH/$OUTPUT_FOLDER/arch/$ARCHITECTURE/boot/dt.img -s 2048 -p $BUILD_PATH/$OUTPUT_FOLDER/scripts/dtc/ $BUILD_PATH/$OUTPUT_FOLDER/arch/$ARCHITECTURE/boot/
 	fi
 
 	TIMESTAMP2=$(date +%s)
 
 	# Log compile time (screen output)
 	echo "compile time:" $(($TIMESTAMP2 - $TIMESTAMP1)) "seconds"
-	echo "zImage size (bytes):"
-	stat -c%s $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/zImage
+	echo "Kernel image size (bytes):"
+	stat -c%s $BUILD_PATH/$OUTPUT_FOLDER/arch/$ARCHITECTURE/boot/$KERNEL_IMAGE
 
 	# Log compile time and parameters (log file output)
 	echo -e "\n***************************************************" >> ../compile.log
 	echo -e "\ncompile time:" $(($TIMESTAMP2 - $TIMESTAMP1)) "seconds" >> ../compile.log
-	echo "zImage size (bytes):" >> ../compile.log
-	stat -c%s $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/zImage >> ../compile.log
+	echo "Kernel image size (bytes):" >> ../compile.log
+	stat -c%s $BUILD_PATH/$OUTPUT_FOLDER/arch/$ARCHITECTURE/boot/$KERNEL_IMAGE >> ../compile.log
 
 	echo -e "\n***************************************************" >> ../compile.log
 	echo -e "\nroot path:" $ROOT_PATH >> ../compile.log
@@ -205,13 +203,13 @@ step4_prepare_anykernel()
 	# delete placeholder files
 	find . -name placeholder -delete
 
-	# copy kernel zImage
-	cp $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/zImage $REPACK_PATH/zImage
+	# copy kernel image
+	cp $BUILD_PATH/$OUTPUT_FOLDER/arch/$ARCHITECTURE/boot/$KERNEL_IMAGE $REPACK_PATH/zImage
 
 	{
 		# copy dtb (if we have one)
 		if [ "y" == "$COMPILE_DTB" ]; then
-			cp $BUILD_PATH/$OUTPUT_FOLDER/arch/arm64/boot/dt.img $REPACK_PATH/dtb
+			cp $BUILD_PATH/$OUTPUT_FOLDER/arch/$ARCHITECTURE/boot/dt.img $REPACK_PATH/dtb
 		fi
 
 		# copy modules to either modules folder (CM and derivates) or directly in ramdisk (Samsung stock)
@@ -349,13 +347,13 @@ stepR_rewrite_config()
 
 	# copy defconfig, run make oldconfig and copy it back
 	cd $SOURCE_PATH
-	cp arch/arm64/configs/$DEFCONFIG .config
+	cp arch/$ARCHITECTURE/configs/$DEFCONFIG .config
 	make oldconfig
-	cp .config arch/arm64/configs/$DEFCONFIG
+	cp .config arch/$ARCHITECTURE/configs/$DEFCONFIG
 	make mrproper
 
 	# commit change
-	git add arch/arm64/configs/$DEFCONFIG
+	git add arch/$ARCHITECTURE/configs/$DEFCONFIG
 	git commit
 }
 
