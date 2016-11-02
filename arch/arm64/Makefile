@@ -17,8 +17,7 @@ GZFLAGS		:=-9
 
 KBUILD_DEFCONFIG := defconfig
 
-ARM_ARCH_OPT := -mcpu=cortex-a57 -mtune=cortex-a57
-GEN_OPT_FLAGS := $(call cc-option,$(ARM_ARCH_OPT),-march=armv8-a,-mpc-relative-literal-loads) \
+GEN_OPT_FLAGS := $(call cc-option, -mpc-relative-literal-loads) \
  -g0 \
  -DNDEBUG \
  -fomit-frame-pointer \
