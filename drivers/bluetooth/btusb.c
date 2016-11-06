@@ -35,8 +35,8 @@
 static bool disable_scofix;
 static bool force_scofix;
 
-static int sco_conn;
-static int reset = 1;
+static bool sco_conn;
+static bool reset = true;
 
 static struct usb_driver btusb_driver;
 
@@ -1137,7 +1137,7 @@ static void btusb_notify(struct hci_dev *hdev, unsigned int evt)
 
 	if ((evt == HCI_NOTIFY_SCO_COMPLETE) || (evt == HCI_NOTIFY_CONN_DEL)) {
 		BT_DBG("SCO conn state changed: evt %d", evt);
-		sco_conn = (evt == HCI_NOTIFY_SCO_COMPLETE) ? 1 : 0;
+		sco_conn = (evt == HCI_NOTIFY_SCO_COMPLETE);
 		schedule_work(&data->work);
 	}
 }
