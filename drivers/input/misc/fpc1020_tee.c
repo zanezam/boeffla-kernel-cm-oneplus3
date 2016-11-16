@@ -95,7 +95,6 @@ struct fpc1020_data {
 	struct notifier_block fb_notif;
     #endif
 	struct work_struct pm_work;
-	int proximity_state;
 };
 
 static int fpc1020_request_named_gpio(struct fpc1020_data *fpc1020,
@@ -371,53 +370,12 @@ static ssize_t screen_state_get(struct device* device,
 
 static DEVICE_ATTR(screen_state, S_IRUSR , screen_state_get, NULL);
 
-static ssize_t proximity_state_set(struct device *dev,
-	struct device_attribute *attr, const char *buf, size_t count)
-{
-	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
-	int rc, val;
-
-	rc = kstrtoint(buf, 10, &val);
-	if (rc)
-		return -EINVAL;
-
-	if ((val == 0) && (fpc1020->proximity_state == 1))
-	{
-		mutex_lock(&fpc1020->lock);
-		enable_irq( gpio_to_irq( fpc1020->irq_gpio ) );
-		fpc1020->proximity_state = 0;
-		mutex_unlock(&fpc1020->lock);
-		pr_debug("Boeffla: pocketmode disabled\n");
-	}
-	else if ((val == 1) && (fpc1020->proximity_state == 0))
-	{
-		mutex_lock(&fpc1020->lock);
-		disable_irq( gpio_to_irq( fpc1020->irq_gpio ) );
-		fpc1020->proximity_state = 1;
-		mutex_unlock(&fpc1020->lock);
-		pr_debug("Boeffla: pocketmode enabled\n");
-	}
-
-	return count;
-}
-
-static ssize_t proximity_state_get(struct device* device,
-			     struct device_attribute* attribute,
-			     char* buffer)
-{
-	struct fpc1020_data* fpc1020 = dev_get_drvdata(device);
-	return scnprintf(buffer, PAGE_SIZE, "%d\n", fpc1020->proximity_state);
-}
-
-static DEVICE_ATTR(proximity_state, S_IRUSR | S_IWUSR, proximity_state_get, proximity_state_set);
-
 static struct attribute *attributes[] = {
 	&dev_attr_hw_reset.attr,
 	&dev_attr_irq.attr,
 	&dev_attr_report_home.attr,
 	&dev_attr_update_info.attr,
 	&dev_attr_screen_state.attr,
-	&dev_attr_proximity_state.attr,
 	NULL
 };
 
@@ -635,8 +593,6 @@ static int fpc1020_probe(struct platform_device *pdev)
 		dev_err(fpc1020->dev, "Unable to register fb_notifier: %d\n", rc);
     fpc1020->screen_state = 1;
     #endif
-
-	fpc1020->proximity_state = 0;	// default proximity state is fp reader enabled
 
 	irqf = IRQF_TRIGGER_RISING | IRQF_ONESHOT;
 	mutex_init(&fpc1020->lock);
