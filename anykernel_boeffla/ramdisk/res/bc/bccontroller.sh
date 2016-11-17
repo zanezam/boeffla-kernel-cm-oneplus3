@@ -13,7 +13,7 @@
 # ********************************
 
 # kernel specification (hardware; type; target; url)
-KERNEL_SPECS="oneplus3;cm;cm13.0;http://kernel.boeffla.de/oneplus3/boeffla-kernel-cm/"
+KERNEL_SPECS="oneplus3;cm;cm13.0;http://kernel.boeffla.de/oneplus3/boeffla-kernel-cm/;boeffla-kernel-#VERSION#-CM13.0-OnePlus3-anykernel.recovery.zip"
 
 # kernel features 
 # (1=enable-busybox,2=enable-frandom,3=wipe-cache,4=disable-zram-control)
