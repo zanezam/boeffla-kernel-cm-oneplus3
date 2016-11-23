@@ -60,6 +60,8 @@
 #include <linux/boeffla_touchkey_control.h>
 #endif
 
+#include <linux/moduleparam.h>
+
 enum oem_boot_mode{
 	MSM_BOOT_MODE__NORMAL,
 	MSM_BOOT_MODE__FASTBOOT,
@@ -96,6 +98,9 @@ enum oem_boot_mode{
 		pr_err(LOG_TAG ": " a,##arg);\
 	}while(0)
 
+// module parameter
+bool no_buttons_during_touch = 1;
+module_param(no_buttons_during_touch, bool, 0644);
 
 //#define SUPPORT_FOR_COVER_ESD
 #define SUPPORT_VIRTUAL_KEY
@@ -1965,7 +1970,10 @@ bool s1302_is_keypad_stopped(void)
 {
 	struct synaptics_ts_data *ts = tc_g;
 
-	return ts->stop_keypad;
+	if (no_buttons_during_touch)
+		return ts->stop_keypad;
+
+	return false;
 }
 
 static void synaptics_input_event(struct input_handle *handle,
@@ -1976,8 +1984,11 @@ static void synaptics_input_event(struct input_handle *handle,
 	if (code != BTN_TOOL_FINGER)
 		return;
 
-	/* Disable capacitive keys when user's finger is on touchscreen */
-	ts->stop_keypad = value;
+	if (no_buttons_during_touch)
+		/* Disable capacitive keys when user's finger is on touchscreen */
+		ts->stop_keypad = value;
+	else
+		ts->stop_keypad = false;
 }
 
 static int synaptics_input_connect(struct input_handler *handler,
