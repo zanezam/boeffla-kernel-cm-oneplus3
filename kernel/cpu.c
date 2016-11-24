@@ -423,7 +423,7 @@ out_release:
 	if (!err)
 		cpu_notify_nofail(CPU_POST_DEAD | mod, hcpu);
 
-	pr_info("%s by %s[%d]\n", __func__, current->comm, current->pid);
+	pr_debug("%s by %s[%d]\n", __func__, current->comm, current->pid);
 	return err;
 }
 
