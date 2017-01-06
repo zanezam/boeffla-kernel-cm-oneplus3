@@ -1983,7 +1983,7 @@ bool s1302_is_keypad_stopped(void)
 	struct synaptics_ts_data *ts = tc_g;
 
 	if (no_buttons_during_touch)
-		return ts->stop_keypad;
+		return ts ? ts->stop_keypad : false;
 
 	return false;
 }
