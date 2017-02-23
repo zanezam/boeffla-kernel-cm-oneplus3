@@ -10,6 +10,7 @@
 do.devicecheck=1
 do.initd=0
 do.modules=1
+do.system=1
 do.cleanup=1
 device.name1=oneplus3t
 device.name2=OnePlus3T
