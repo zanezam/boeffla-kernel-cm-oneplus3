@@ -346,7 +346,7 @@ static ssize_t report_home_set(struct device *dev,
 	}
 	else if (!strncmp(buf, "up", strlen("up")))
 	{
-        if(!ignore_keypad){
+        if(!virtual_key_enable){
             input_report_key(fpc1020->input_dev,
                             KEY_HOME, 0);
             input_sync(fpc1020->input_dev);
