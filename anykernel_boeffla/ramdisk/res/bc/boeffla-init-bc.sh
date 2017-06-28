@@ -150,8 +150,8 @@
 
 	if [ ! -f $EFS_BACKUP_INT ]; then
 
-		dd if=/dev/block/sde15 of=$BOEFFLA_DATA_PATH/modemst1.bin bs=512
-		dd if=/dev/block/sde16 of=$BOEFFLA_DATA_PATH/modemst2.bin bs=512
+		dd if=/dev/block/sdf1 of=$BOEFFLA_DATA_PATH/modemst1.bin bs=512
+		dd if=/dev/block/sdf2 of=$BOEFFLA_DATA_PATH/modemst2.bin bs=512
 
 		cd $BOEFFLA_DATA_PATH
 		/sbin/busybox tar cvz -f $EFS_BACKUP_INT modemst*
