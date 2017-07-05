@@ -705,26 +705,26 @@ fi
 if [ "apply_governor_profile_2" == "$1" ]; then
 
 	if [ "conservative - standard" == "$2" ]; then
-		echo "20" > /sys/devices/system/cpu/cpu4/cpufreq/conservative/down_threshold
-		echo "5" > /sys/devices/system/cpu/cpu4/cpufreq/conservative/freq_step
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/conservative/ignore_nice_load
-		echo "1" > /sys/devices/system/cpu/cpu4/cpufreq/conservative/sampling_down_factor
-		echo "66666" > /sys/devices/system/cpu/cpu4/cpufreq/conservative/sampling_rate
-		echo "66666" > /sys/devices/system/cpu/cpu4/cpufreq/conservative/sampling_rate_min
-		echo "80" > /sys/devices/system/cpu/cpu4/cpufreq/conservative/up_threshold
+		echo "20" > /sys/devices/system/cpu/cpu2/cpufreq/conservative/down_threshold
+		echo "5" > /sys/devices/system/cpu/cpu2/cpufreq/conservative/freq_step
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/conservative/ignore_nice_load
+		echo "1" > /sys/devices/system/cpu/cpu2/cpufreq/conservative/sampling_down_factor
+		echo "66666" > /sys/devices/system/cpu/cpu2/cpufreq/conservative/sampling_rate
+		echo "66666" > /sys/devices/system/cpu/cpu2/cpufreq/conservative/sampling_rate_min
+		echo "80" > /sys/devices/system/cpu/cpu2/cpufreq/conservative/up_threshold
 
 		busybox sleep 0.5s
 		busybox sync
 	fi
 
 	if [ "ondemand - standard" == "$2" ]; then
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/ondemand/ignore_nice_load
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/ondemand/io_is_busy
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/ondemand/powersave_bias
-		echo "1" > /sys/devices/system/cpu/cpu4/cpufreq/ondemand/sampling_down_factor
-		echo "10000" > /sys/devices/system/cpu/cpu4/cpufreq/ondemand/sampling_rate
-		echo "10000" > /sys/devices/system/cpu/cpu4/cpufreq/ondemand/sampling_rate_min
-		echo "95" > /sys/devices/system/cpu/cpu4/cpufreq/ondemand/up_threshold
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/ondemand/ignore_nice_load
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/ondemand/io_is_busy
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/ondemand/powersave_bias
+		echo "1" > /sys/devices/system/cpu/cpu2/cpufreq/ondemand/sampling_down_factor
+		echo "10000" > /sys/devices/system/cpu/cpu2/cpufreq/ondemand/sampling_rate
+		echo "10000" > /sys/devices/system/cpu/cpu2/cpufreq/ondemand/sampling_rate_min
+		echo "95" > /sys/devices/system/cpu/cpu2/cpufreq/ondemand/up_threshold
 
 		busybox sleep 0.5s
 		busybox sync
@@ -827,55 +827,55 @@ if [ "apply_governor_profile_2" == "$1" ]; then
 	fi
 
 	if [ "impulse - standard" == "$2" ]; then
-		echo "20000" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/above_hispeed_delay
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/align_windows
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/boost
-		echo "80000" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/boostpulse_duration
-		echo "99" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/go_hispeed_load
-		echo "5" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/go_lowspeed_load
-		echo "1766400" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/hispeed_freq
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/io_is_busy
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/max_freq_hysteresis
-		echo "80000" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/min_sample_time
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/powersave_bias
-		echo "90" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/target_loads
-		echo "20000" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/timer_rate
-		echo "80000" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/timer_slack
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/use_migration_notif
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/impulse/use_sched_load
+		echo "20000" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/above_hispeed_delay
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/align_windows
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/boost
+		echo "80000" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/boostpulse_duration
+		echo "99" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/go_hispeed_load
+		echo "5" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/go_lowspeed_load
+		echo "1766400" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/hispeed_freq
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/io_is_busy
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/max_freq_hysteresis
+		echo "80000" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/min_sample_time
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/powersave_bias
+		echo "90" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/target_loads
+		echo "20000" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/timer_rate
+		echo "80000" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/timer_slack
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/use_migration_notif
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/impulse/use_sched_load
 
 		busybox sleep 0.5s
 		busybox sync
 	fi
 
 	if [ "elementalx - standard" == "$2" ]; then
-		echo "960000" > /sys/devices/system/cpu/cpu4/cpufreq/elementalx/active_floor_freq
-		echo "20" > /sys/devices/system/cpu/cpu4/cpufreq/elementalx/down_differential
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/elementalx/powersave
-		echo "4" > /sys/devices/system/cpu/cpu4/cpufreq/elementalx/sampling_down_factor
-		echo "10000" > /sys/devices/system/cpu/cpu4/cpufreq/elementalx/sampling_rate
-		echo "10000" > /sys/devices/system/cpu/cpu4/cpufreq/elementalx/sampling_rate_min
-		echo "90" > /sys/devices/system/cpu/cpu4/cpufreq/elementalx/up_threshold
+		echo "960000" > /sys/devices/system/cpu/cpu2/cpufreq/elementalx/active_floor_freq
+		echo "20" > /sys/devices/system/cpu/cpu2/cpufreq/elementalx/down_differential
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/elementalx/powersave
+		echo "4" > /sys/devices/system/cpu/cpu2/cpufreq/elementalx/sampling_down_factor
+		echo "10000" > /sys/devices/system/cpu/cpu2/cpufreq/elementalx/sampling_rate
+		echo "10000" > /sys/devices/system/cpu/cpu2/cpufreq/elementalx/sampling_rate_min
+		echo "90" > /sys/devices/system/cpu/cpu2/cpufreq/elementalx/up_threshold
 
 		busybox sleep 0.5s
 		busybox sync
 	fi
 
 	if [ "zzmoove - standard" == "$2" ]; then
-		echo "25" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/afs_threshold1
-		echo "50" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/afs_threshold2
-		echo "75" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/afs_threshold3
-		echo "90" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/afs_threshold4
-		echo "40" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/down_threshold
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/fast_scaling_down
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/fast_scaling_up
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/ignore_nice_load
-		echo "1" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/sampling_down_factor
-		echo "200000" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/sampling_rate
-		echo "200000" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/sampling_rate_min
-		echo "0" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/scaling_proportional
-		echo "75" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/smooth_up
-		echo "80" > /sys/devices/system/cpu/cpu4/cpufreq/zzmoove/up_threshold
+		echo "25" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/afs_threshold1
+		echo "50" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/afs_threshold2
+		echo "75" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/afs_threshold3
+		echo "90" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/afs_threshold4
+		echo "40" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/down_threshold
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/fast_scaling_down
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/fast_scaling_up
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/ignore_nice_load
+		echo "1" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/sampling_down_factor
+		echo "200000" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/sampling_rate
+		echo "200000" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/sampling_rate_min
+		echo "0" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/scaling_proportional
+		echo "75" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/smooth_up
+		echo "80" > /sys/devices/system/cpu/cpu2/cpufreq/zzmoove/up_threshold
 	fi
 
 	if [ "blu_active - standard" == "$2" ]; then
