@@ -21,7 +21,6 @@ GEN_OPT_FLAGS := $(call cc-option, -mpc-relative-literal-loads) \
  -g0 \
  -DNDEBUG \
  -fomit-frame-pointer \
- -fmodulo-sched \
  -fmodulo-sched-allow-regmoves \
  -fivopts
 
