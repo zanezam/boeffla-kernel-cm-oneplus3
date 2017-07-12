@@ -414,7 +414,9 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -Werror-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-const-variable \
 		   -Wno-format-security -Wno-discarded-array-qualifiers -Wno-memset-transposed-args \
 		   -Wno-bool-compare -Wno-logical-not-parentheses -Wno-switch-bool -Wno-tautological-compare \
-		   -std=gnu89 \
+		   -std=gnu89 -Wno-format-truncation -Wno-bool-operation -Wno-duplicate-decl-specifier \
+		   -Wno-memset-elt-size -Wno-parentheses -Wno-format-overflow -Wno-int-in-bool-context \
+		   -Wno-switch-unreachable \
 		   $(GEN_OPT_FLAGS)
 KBUILD_AFLAGS_KERNEL := $(GEN_OPT_FLAGS)
 KBUILD_CFLAGS_KERNEL := $(GEN_OPT_FLAGS)
@@ -626,7 +628,7 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
 else
-KBUILD_CFLAGS	+= -Ofast -fno-inline-functions -fno-ipa-cp-clone
+KBUILD_CFLAGS	+= -Ofast -fno-inline-functions -fno-ipa-cp-clone -fno-store-merging
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
