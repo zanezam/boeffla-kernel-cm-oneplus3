@@ -626,6 +626,10 @@ module_param_named(
 	extern void set_mcu_en_gpio_value(int value);
 	extern void usb_sw_gpio_set(int value);
 
+#ifdef CONFIG_CHARGE_LEVEL
+	struct smbchg_chip *chg_cache;
+#endif
+
 static int smbchg_read(struct smbchg_chip *chip, u8 *val,
 			u16 addr, int count)
 {
@@ -9740,6 +9744,33 @@ static int notify_usb_enumeration_function(int status)
 static struct notify_usb_enumeration_status usb_enumeration  = {
 	.notify_usb_enumeration		= notify_usb_enumeration_function,
 };
+
+#ifdef CONFIG_CHARGE_LEVEL
+int get_bk_current_now (void)
+{
+	int curr;
+
+	// get current and convert to mA (positive = charging, negative = discharging)
+	curr = (get_prop_batt_current_now(chg_cache) / 1000) * -1;
+
+	// we are only interested in charging value, set it to 0 otherwise
+	if (curr < 0)
+		curr = 0;
+
+	return curr;
+}
+
+int get_bk_charger_type (void)
+{
+	return chg_cache->usb_supply_type;
+}
+
+bool get_bk_fast_charge (void)
+{
+	return get_prop_fast_chg_started(chg_cache);
+}
+#endif
+
 static int smbchg_probe(struct spmi_device *spmi)
 {
 	int rc;
@@ -9798,6 +9829,11 @@ static int smbchg_probe(struct spmi_device *spmi)
 		dev_err(&spmi->dev, "Unable to allocate memory\n");
 		return -ENOMEM;
 	}
+
+#ifdef CONFIG_CHARGE_LEVEL
+	// store pointer to smbchg_chip struct in cache
+	chg_cache = chip;
+#endif
 
 	chip->fcc_votable = create_votable(&spmi->dev,
 			"SMBCHG: fcc",
