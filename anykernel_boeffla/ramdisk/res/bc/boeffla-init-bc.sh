@@ -59,6 +59,11 @@
 # remove any obsolete Boeffla-Config V2 startconfig done file
 	/sbin/busybox rm -f $BOEFFLA_STARTCONFIG_DONE
 
+# execute the early startconfig script, if it exists
+	if [ -f $BOEFFLA_STARTCONFIG_EARLY ]; then
+	. $BOEFFLA_STARTCONFIG_EARLY
+	fi
+
 # Apply Boeffla-Kernel default settings
 
 	# Sdcard buffer tweaks default to 1024 kb
