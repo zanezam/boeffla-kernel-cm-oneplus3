@@ -18,8 +18,8 @@ KERNEL_SPECS="oneplus3t;cm;cm14.0;http://kernel.boeffla.de/oneplus3t/boeffla-ker
 # kernel features 
 # (1=enable-busybox,2=enable-frandom,3=wipe-cache,4=disable-zram-control)
 # (5=enable-default-zram-control,6=enable-selinux-switch, 7=enable-selinux-control)
-# (8=no-hotplugging,9=enable-doze-control)
-KERNEL_FEATURES="-3-4-6-7-9-"
+# (8=no-hotplugging,9=enable-doze-control, A=reduced KCAL)
+KERNEL_FEATURES="-3-4-6-7-9-A-"
 
 # path to kernel libraries
 LIBPATH="/system/lib/modules"
